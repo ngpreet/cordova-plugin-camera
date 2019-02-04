@@ -59,16 +59,19 @@ function capture (success, errorCallback, opts) {
 
     var video = document.createElement('video');
     var button = document.createElement('button');
+    var button2 = document.createElement('button');
     var parent = document.createElement('div');
     parent.style.position = 'relative';
     parent.style.zIndex = HIGHEST_POSSIBLE_Z_INDEX;
     parent.className = 'cordova-camera-capture';
     parent.appendChild(video);
     parent.appendChild(button);
+    parent.appendChild(button2);
 
     video.width = targetWidth;
     video.height = targetHeight;
     button.innerHTML = 'Capture!';
+    button2.innerHTML = 'Cancel';
 
     button.onclick = function () {
         // create a canvas and capture a frame from video stream
@@ -94,6 +97,17 @@ function capture (success, errorCallback, opts) {
 
         return success(imageData);
     };
+
+    button2.onclick = function () {
+        if (localMediaStream.stop) {
+            localMediaStream.stop();
+        } else {
+            localMediaStream.getTracks().forEach(function (track) {
+                track.stop();
+            });
+        }
+        parent.parentNode.removeChild(parent);
+    }
 
     navigator.getUserMedia = navigator.getUserMedia ||
                              navigator.webkitGetUserMedia ||
